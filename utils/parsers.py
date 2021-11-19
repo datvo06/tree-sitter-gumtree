@@ -1,6 +1,7 @@
 from tree_sitter import Language, Parser
 import os
 import networkx as nx
+import json
 
 os.makedirs('build', exist_ok=True)
 if not os.path.exists('build/tree_sitter_langs.so'):
@@ -73,13 +74,13 @@ def convert_to_dict(tree, content):
         n = queue.pop(0)
         pid = p_queue.pop(0)
         nid = len(out_dict)
-        n_content = content[n.start_byte:n.end_byte] if len(n.children) == 0\
+        n_content = content[n.start_byte:n.end_byte].decode('utf-8') if len(n.children) == 0\
                         else ""
-        line_start = len(content[:(n.start_byte+1)].split("\n"))
-        col_start = len(content[:(n.start_byte+1)].split("\n")[-1])
+        line_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n"))
+        col_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n")[-1])
 
-        line_end = len(content[:(n.end_byte)].split("\n"))
-        col_end= len(content[:(n.end_byte)].split("\n")[-1])
+        line_end = len(content[:(n.end_byte)].decode('utf-8').split("\n"))
+        col_end= len(content[:(n.end_byte)].decode('utf-8').split("\n")[-1])
 
         out_dict["nodes"].append(
             {
@@ -95,7 +96,7 @@ def convert_to_dict(tree, content):
         )
         queue.extend(n.children)
         p_queue.extend([nid] * len(n.children))
-    return out_dict
+    return json.dumps(out_dict)
 
 
 
