@@ -1,6 +1,6 @@
 from tree_sitter import Language, Parser
 import os
-import nx
+import networkx as nx
 
 os.makedirs('build', exist_ok=True)
 if not os.path.exists('build/tree_sitter_langs.so'):
@@ -41,19 +41,21 @@ def convert_to_nx(tree, content):
         n = queue.pop(0)
         pid = p_queue.pop(0)
         nid = len(nx_g.nodes())
-        n_content = content[n.start_byte:n.end_byte] if len(n.children) == 0\
+        n_content = content[n.start_byte:n.end_byte].decode('utf-8') if len(n.children) == 0\
                         else ""
-        line_start = len(content[:(n.start_byte+1)].split("\n"))
-        col_start = len(content[:(n.start_byte+1)].split("\n")[-1])
+        line_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n"))
+        col_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n")[-1])
 
-        line_end = len(content[:(n.end_byte)].split("\n"))
-        col_end= len(content[:(n.end_byte)].split("\n")[-1])
+        line_end = len(content[:(n.end_byte)].decode('utf-8').split("\n"))
+        col_end= len(content[:(n.end_byte)].decode('utf-8').split("\n")[-1])
 
         nx_g.add_node(nid, ntype=n.type, token=n_content,
                       start_line=line_start,
                       start_col=col_start,
                       end_line=line_end,
-                      end_col=col_end)
+                      end_col=col_end,
+                      graph='ast'
+                      )
         if pid != -1:
             nx_g.add_edge(pid, nid, label='parent_child')
 
@@ -94,3 +96,10 @@ def convert_to_dict(tree, content):
         queue.extend(n.children)
         p_queue.extend([nid] * len(n.children))
     return out_dict
+
+
+
+cpp_parser = get_parser(CPP_LANGUAGE)
+python_parser = get_parser(PYTHON_LANGUAGE)
+java_parser = get_parser(JAVA_LANGUAGE)
+js_parser = get_parser(JS_LANGUAGE)
