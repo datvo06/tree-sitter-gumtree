@@ -53,8 +53,10 @@ def convert_to_nx(tree, content):
         nx_g.add_node(nid, ntype=n.type, token=n_content,
                       start_line=line_start,
                       start_col=col_start,
+                      start_pos=n.start_byte,
                       end_line=line_end,
                       end_col=col_end,
+                      end_pos=n.end_byte,
                       graph='ast'
                       )
         if pid != -1:
@@ -69,7 +71,7 @@ def convert_to_dict(tree, content):
     root = tree.root_node
     queue = [root]
     p_queue = [-1]
-    out_dict = {"nodes": []}
+    out_dict = {"nodes": {}}
     while (len(queue)) > 0:
         n = queue.pop(0)
         pid = p_queue.pop(0)
@@ -82,22 +84,34 @@ def convert_to_dict(tree, content):
         line_end = len(content[:(n.end_byte)].decode('utf-8').split("\n"))
         col_end= len(content[:(n.end_byte)].decode('utf-8').split("\n")[-1])
 
-        out_dict["nodes"].append(
-            {
-                "id": nid,
+        out_dict["nodes"][nid] = {
                 "ntype": n.type,
                 "token": n_content,
                 "start_line": line_start,
+                "start_pos": n.start_pos,
                 "start_col": col_start,
                 "end_line": line_end,
                 "end_col": col_end,
+                "end_pos": n.end_pos,
                 "parent": pid
-            }
-        )
+        }
         queue.extend(n.children)
         p_queue.extend([nid] * len(n.children))
     return json.dumps(out_dict)
 
+
+def ast_diff(fp1, fp2, parser):
+    ''' Return a dictionary consists of a 'mapping' between src and dst node,
+    list of 'deleted', and 'inserted' nodes
+    '''
+    cb1 = bytes(open(fp1).read(), encoding='utf-8')
+    cb2 = bytes(open(fp2).read(), encoding='utf-8')
+    tree1 = parser.parse(cb1)
+    tree2 = parser.parse(cb2)
+    dict1 = json.loads(convert_to_dict(tree1))
+    dict2 = json.loads(convert_to_dict(tree2))
+    concat_dict = {"file1": dict1, "file2": dict2}
+    # Let's call gumtree utils here
 
 
 cpp_parser = get_parser(CPP_LANGUAGE)
