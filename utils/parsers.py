@@ -75,7 +75,7 @@ def convert_to_dict(tree, content):
     while (len(queue)) > 0:
         n = queue.pop(0)
         pid = p_queue.pop(0)
-        nid = len(out_dict)
+        nid = len(out_dict["nodes"].keys())
         n_content = content[n.start_byte:n.end_byte].decode('utf-8') if len(n.children) == 0\
                         else ""
         line_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n"))
