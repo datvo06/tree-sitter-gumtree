@@ -97,6 +97,7 @@ def convert_to_dict(tree, content):
         }
         queue.extend(n.children)
         p_queue.extend([nid] * len(n.children))
+    out_dict["nodes"]['size'] = len(out_dict["nodes"].keys())
     return json.dumps(out_dict)
 
 
