@@ -1,7 +1,10 @@
 from tree_sitter import Language, Parser
+from subprocess import Popen, PIPE, STDOUT, run
+import subprocess
 import os
 import networkx as nx
 import json
+from utils.config import Config
 
 os.makedirs('build', exist_ok=True)
 if not os.path.exists('build/tree_sitter_langs.so'):
@@ -101,7 +104,7 @@ def convert_to_dict(tree, content):
     return json.dumps(out_dict)
 
 
-def ast_diff(fp1, fp2, parser):
+def ast_cat(fp1, fp2, parser):
     ''' Return a dictionary consists of a 'mapping' between src and dst node,
     list of 'deleted', and 'inserted' nodes
     '''
@@ -109,11 +112,23 @@ def ast_diff(fp1, fp2, parser):
     cb2 = bytes(open(fp2).read(), encoding='utf-8')
     tree1 = parser.parse(cb1)
     tree2 = parser.parse(cb2)
-    dict1 = json.loads(convert_to_dict(tree1))
-    dict2 = json.loads(convert_to_dict(tree2))
+    dict1 = json.loads(convert_to_dict(tree1, cb1))
+    dict2 = json.loads(convert_to_dict(tree2, cb2))
     concat_dict = {"file1": dict1, "file2": dict2}
     # Let's call gumtree utils here
+    return json.dumps(concat_dict)
 
+
+def ast_diff(fp1, fp2, parser):
+    ''' Return a dictionary consists of a 'mapping' between src and dst node,
+    list of 'deleted', and 'inserted' nodes
+    '''
+    cat_json = ast_cat(fp1, fp2, parser)
+    pipe = run(Config.gumtree_cmd, stdout=PIPE,
+               input=cat_json+'\n', encoding='utf-8')
+    json_str = pipe.stdout.split("\n")[-2]
+    mapping_dict = json.loads(json_str)
+    return mapping_dict
 
 cpp_parser = get_parser(CPP_LANGUAGE)
 python_parser = get_parser(PYTHON_LANGUAGE)

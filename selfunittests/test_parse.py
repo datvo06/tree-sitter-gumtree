@@ -1,6 +1,6 @@
 from utils.draw_utils import ast_to_agraph
 from utils.parsers import cpp_parser, python_parser, convert_to_nx, \
-    convert_to_dict
+    convert_to_dict, ast_cat, ast_diff
 import os
 
 
@@ -69,7 +69,23 @@ def test3():
     print(out_dict)
 
 
+def test4_astcat():
+    fp1 = "selfunittests/file1.cpp"
+    fp2 = "selfunittests/file2.cpp"
+    cat_dict = ast_cat(fp1, fp2, cpp_parser)
+    print(cat_dict)
+
+
+def test5_astdiff():
+    fp1 = "selfunittests/file1.cpp"
+    fp2 = "selfunittests/file2.cpp"
+    mapping_dict = ast_diff(fp1, fp2, cpp_parser)
+    print(mapping_dict)
+
+
 if __name__ == '__main__':
     test1()
     test2()
     test3()
+    test4_astcat()
+    test5_astdiff()
