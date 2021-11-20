@@ -88,11 +88,11 @@ def convert_to_dict(tree, content):
                 "ntype": n.type,
                 "token": n_content,
                 "start_line": line_start,
-                "start_pos": n.start_pos,
+                "start_pos": n.start_byte,
                 "start_col": col_start,
                 "end_line": line_end,
                 "end_col": col_end,
-                "end_pos": n.end_pos,
+                "end_pos": n.end_byte,
                 "parent": pid
         }
         queue.extend(n.children)
