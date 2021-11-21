@@ -13,3 +13,12 @@
 	}
 }
 ```
+
+## Running
+### Download Jars file
+![Download the `jars.zip` and unzip into `jars` folder](https://drive.google.com/file/d/18m3fhSdxhCuAS2aZuUROo2QLMSneuEcP/view?usp=sharing)
+### Install requirements
+```bash
+pip install tree-sitter
+pip install networkx
+```
