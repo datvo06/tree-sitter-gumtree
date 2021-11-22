@@ -5,6 +5,13 @@ This project is dedicated to get tree-sitter parser to work with gumtree conveni
 ## Running
 ### Download Jars file
 [Download the `jars.zip` and unzip into `jars` folder](https://drive.google.com/file/d/18m3fhSdxhCuAS2aZuUROo2QLMSneuEcP/view?usp=sharing)
+### Clone and Init submodules
+```bash
+git clone https://github.com/datvo06/tree-sitter-gumtree
+git submodule update --init --recursive
+```
+
+
 ### Install requirements
 ```bash
 pip install tree-sitter
