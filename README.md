@@ -22,3 +22,8 @@
 pip install tree-sitter
 pip install networkx
 ```
+### Example
+Get map by line
+```bash
+python3 get\_mapping\_by\_line <file1> <file2> <out_file>
+```
