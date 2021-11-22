@@ -79,6 +79,9 @@ def convert_to_dict(tree, content):
         n = queue.pop(0)
         pid = p_queue.pop(0)
         nid = len(out_dict["nodes"].keys())
+        if n.type == '\n':
+            continue
+
         n_content = content[n.start_byte:n.end_byte].decode('utf-8') if len(n.children) == 0\
                         else ""
         line_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n"))
@@ -128,6 +131,8 @@ def ast_diff(fp1, fp2, parser):
                input=cat_json+'\n', encoding='utf-8')
     json_str = pipe.stdout.split("\n")[-2]
     mapping_dict = json.loads(json_str)
+    mapping_dict['mapping'] = {int(k): int(v)
+                               for k, v in mapping_dict['mapping'].items()}
     return mapping_dict
 
 cpp_parser = get_parser(CPP_LANGUAGE)
