@@ -86,19 +86,21 @@ def convert_to_dict(tree, content):
                         else ""
         line_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n"))
         col_start = len(content[:(n.start_byte+1)].decode('utf-8').split("\n")[-1])
+        pos_start = len(content[:(n.start_byte+1)].decode('utf-8')[-1])
 
         line_end = len(content[:(n.end_byte)].decode('utf-8').split("\n"))
         col_end= len(content[:(n.end_byte)].decode('utf-8').split("\n")[-1])
+        pos_end = len(content[:(n.end_byte)].decode('utf-8')[-1])
 
         out_dict["nodes"][nid] = {
                 "ntype": n.type,
                 "token": n_content,
                 "start_line": line_start,
-                "start_pos": n.start_byte,
+                "start_pos": pos_start,
                 "start_col": col_start,
                 "end_line": line_end,
                 "end_col": col_end,
-                "end_pos": n.end_byte,
+                "end_pos": pos_end,
                 "parent": pid
         }
         queue.extend(n.children)
